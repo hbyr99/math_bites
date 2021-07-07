@@ -1,51 +1,46 @@
 import pandas as pd
-from mysql.connector import connect, Error
+import warnings
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
+
 
 class DB_Func:
-    def __init__(self, host, user):
-        self.host = host
-        self.user = user
-        self.connection = connect(
-            host=self.host,
-            user=self.user,
-            password = 'Password',
-        )
+    def __init__(self):
+        self.connection = create_engine('mysql://root:codio@localhost')
         self.db = None
         self.df = pd.DataFrame()
 
 
     def createDB(self, db_name):
-        try:
-            self.db = db_name
-            create_db_query = 'CREATE DATABASE IF NOT EXISTS ' + db_name + '; '
-            use_database_entry = "USE " + self.db
-            
-            with self.connection.cursor() as cursor:
-                cursor.execute(create_db_query)
-                cursor.execute(use_database_entry)
-                self.connection.commit()
-                
-        except Error as e:
-            print(e)
+        self.db = db_name
+        create_db_query = text('CREATE DATABASE IF NOT EXISTS ' + db_name)
+        use_database_entry = text("USE " + self.db)
+        
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", module = "sqlalchemy")
+            self.connection.execute(create_db_query)
+            self.connection.execute(use_database_entry)
+
+
 
     def addEntry(self, table, number):
-        create_table_query = """
+        create_table_query = text("""
         CREATE TABLE IF NOT EXISTS {} (
             number VARCHAR(255) NOT NULL,
             appearances INT UNSIGNED DEFAULT 1,
             UNIQUE KEY (number)
         )
-        """.format(table)
-        insert_entry = """
+        """.format(table))
+        insert_entry = text("""
         INSERT INTO {} (number) 
             VALUES ({})
             ON DUPLICATE KEY UPDATE appearances = appearances + 1 
-        """.format(table, number)
-
-        with self.connection.cursor() as cursor:
-            cursor.execute(create_table_query)
-            cursor.execute(insert_entry)
-            self.connection.commit()
+        """.format(table, number))
+        
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", module = "sqlalchemy")
+            self.connection.execute(create_table_query)
+            self.connection.execute(insert_entry)
 
 
     def showTable(self, table):
