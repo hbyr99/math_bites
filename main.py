@@ -2,17 +2,18 @@
 import requests
 from DB_Func import DB_Func
 
+
 class MathBites:
     def __init__(self):
         self.KEY = "8ea42e22ddmsh636295d97820b16p13f8fajsn0f1762f562d0"
         self.dbinter = DB_Func()
         self.dbinter.createDB('math_bites')
-    
+
     def main_menu(self):
         while True:
             choice = input("""
                 What would you like to do?
-                (1) -- Look up a fact 
+                (1) -- Look up a fact
                 (2) -- View previous searches
                 (3) -- View data analytics
                 (4) -- Clear history
@@ -24,7 +25,7 @@ class MathBites:
 
             elif choice == '2':
                 self.history_menu()
-            
+
             elif choice == '3':
                 self.data_menu()
 
@@ -38,7 +39,6 @@ class MathBites:
 
             else:
                 print("Invalid input! ")
-
 
     def fact_menu(self):
         while True:
@@ -66,9 +66,9 @@ class MathBites:
 
             elif choice == '4':
                 entry_month = input(
-                    "What month would you like to look up? (Please enter number) ")
+                    "What month would you like to look up? (Numerical) ")
                 entry_day = input(
-                    "What day would you like to look up? (Please enter number) ")
+                    "What day would you like to look up? (Numerical) ")
 
                 self.date_lookup(entry_day, entry_month)
 
@@ -86,7 +86,6 @@ class MathBites:
             else:
                 print("Invalid input! ")
 
-
     def math_lookup(self, number):
         url = "https://numbersapi.p.rapidapi.com/" + number + "/math"
         response_data = self.get_data(url).json()
@@ -96,7 +95,6 @@ class MathBites:
         self.dbinter.addEntry('math', number)
         self.dbinter.addEntry('main', number)
 
-
     def trivia_lookup(self, number):
         url = "https://numbersapi.p.rapidapi.com/" + number + "/trivia"
         response_data = self.get_data(url).json()
@@ -104,7 +102,6 @@ class MathBites:
         print("{} is {}.".format(response_data['number'],
                                  response_data['text']))
         self.dbinter.addEntry('trivia', number)
-
 
     def year_lookup(self, number):
         url = "https://numbersapi.p.rapidapi.com/" + number + "/year"
@@ -115,19 +112,24 @@ class MathBites:
         self.dbinter.addEntry('year', number)
         self.dbinter.addEntry('main', number)
 
-
     def date_lookup(self, day, month):
-        url = "https://numbersapi.p.rapidapi.com/" + month + "/" + day + "/date"
+        url = ("https://numbersapi.p.rapidapi.com/" +
+               month +
+               "/" +
+               day +
+               "/date")
+
         response_data = self.get_data(url).json()
 
-        print("On {}/{}/{}, the {} day of the year, {}.".format(month,
-                                        day,
-                                        response_data['year'],
-                                        response_data['number'],
-                                        response_data['text']))
+        print("On {}/{}/{}, the {} day of the year, {}."
+              .format(month,
+                      day,
+                      response_data['year'],
+                      response_data['number'],
+                      response_data['text']))
+
         self.dbinter.addEntry('date', '{}'.format(response_data['number']))
         self.dbinter.addEntry('main', '{}'.format(response_data['number']))
-
 
     def get_data(self, url):
         QUERYSTRING = {"json": "true", "fragment": "true"}
@@ -136,8 +138,10 @@ class MathBites:
             'x-rapidapi-host': "numbersapi.p.rapidapi.com"
         }
 
-        return requests.request("GET", url, headers=HEADERS, params=QUERYSTRING)
-
+        return requests.request("GET",
+                                url,
+                                headers=HEADERS,
+                                params=QUERYSTRING)
 
     def history_menu(self):
         while True:
@@ -171,7 +175,6 @@ class MathBites:
 
             else:
                 print("Invalid input! ")
-
 
     def data_menu(self):
         while True:
