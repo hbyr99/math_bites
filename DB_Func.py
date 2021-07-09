@@ -3,7 +3,8 @@ import plotly.graph_objects as go
 import warnings
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import (ProgrammingError,
+                            SADeprecationWarning)
 
 
 class DB_Func:
@@ -44,7 +45,9 @@ class DB_Func:
     def showTable(self, table):
         show_table_query = 'SELECT * FROM ' + table
         try:
-            df = pd.read_sql(show_table_query, con=self.connection)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=SADeprecationWarning)
+                df = pd.read_sql(show_table_query, con=self.connection)
             print(df)
         except ProgrammingError as e:
             print("No search history found! ")
@@ -52,7 +55,9 @@ class DB_Func:
     def showScatter(self, table):
         fetch_table_query = 'SELECT * FROM ' + table
         try:
-            df = pd.read_sql(fetch_table_query, con=self.connection)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=SADeprecationWarning)
+                df = pd.read_sql(fetch_table_query, con=self.connection)
         except ProgrammingError as e:
             print("No search history found! ")
             return
