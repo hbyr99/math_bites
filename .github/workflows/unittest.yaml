@@ -28,7 +28,7 @@ jobs:
         run: python -m pip install --upgrade pip matplotlib
         
       - name: Install MySQLdb
-        run: python -m pip install --upgrade pip MySQLdb
+        run: python -m pip install --upgrade pip mysql-python
         
       - name: Install coverage
         run: pip install coverage
