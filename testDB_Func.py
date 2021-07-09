@@ -5,16 +5,6 @@ from os import path
 from DB_Func import DB_Func
 
 
-class Capturing(list):
-    def __enter__(self):
-        self._stdout = sys.stdout
-        sys.stdout = self._stringio = StringIO()
-        return self
-    def __exit__(self, *args):
-        self.extend(self._stringio.getvalue().splitlines())
-        del self._stringio    # free up some memory
-        sys.stdout = self._stdout
-
 class TestDB_Func(unittest.TestCase):
     def test_createDB(self):
         try:
@@ -33,8 +23,8 @@ class TestDB_Func(unittest.TestCase):
             FROM information_schema.tables
             WHERE table_name = 'test1'
             """)
-        
-        assert(result != None)
+
+        assert(result is not None)
 
     def test_showScatter(self):
         testDB = DB_Func()
@@ -51,7 +41,7 @@ class TestDB_Func(unittest.TestCase):
             testDB.deleteDB('test')
         except Exception as e:
             raise AssertionError('Test failed!')
-        
-    
+
+
 if __name__ == '__main__':
     unittest.main()
