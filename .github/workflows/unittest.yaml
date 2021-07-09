@@ -27,7 +27,7 @@ jobs:
       - name: Install MYSQL
         run: |
             python -m pip install --upgrade pip mysql
-            sudo service mysql start
+            mysqld_safe
         
       - name: Install coverage
         run: pip install coverage
